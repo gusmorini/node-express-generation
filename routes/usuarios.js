@@ -80,4 +80,31 @@ router.put("/:usuarioId", (request, response) => {
 
 })
 
+// delete - usuarios/1
+router.delete("/:usuarioId", (request, response) => {
+
+    const { params:{usuarioId} } = request;
+
+    Usuario.destroy({
+        where: {
+            id: usuarioId
+        }
+    })
+    .then( deletados => {
+        if(deletados > 0)
+        {
+            response.status(204).send()
+        }
+        else
+        {
+            response.status(404).send('Usuario não encontrado')
+        }
+    })
+    .catch(ex => {
+        console.error(ex)
+        response.status(412).send('Não foi possivel deletar o usuarios')
+    })
+
+})
+
 module.exports = router;
