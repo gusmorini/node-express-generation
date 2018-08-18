@@ -1,6 +1,7 @@
-const express = require('express');
-const router = express.Router();
-const { Usuario } = require ('../models');
+const express = require('express')
+const Sequelize = require('sequelize')
+const router = express.Router()
+const { Usuario } = require ('../models')
 
 // aqui definir as rotas no /usuarios
 
@@ -105,6 +106,31 @@ router.delete("/:usuarioId", (request, response) => {
         response.status(412).send('Não foi possivel deletar o usuarios')
     })
 
+})
+
+// GET - /usuarios?nome=...
+router.get('/', (request, response) => {
+
+    const { query:{nome} } = request
+
+    const usuarioQuery = {
+        where:{}
+    }
+
+    if (nome)
+    {
+        usuarioQuery.where.nome = {
+            [Sequelize.Op.like]: `%${nome}%`
+        }
+    }
+
+    Usuario.findAll(usuarioQuery)
+        .then(usuarios => {
+            response.status(200).json(usuarios)
+        })
+        .catch(ex=>{
+            console.error('Não foi possível conectar ao BD', error)
+        })
 })
 
 module.exports = router;
